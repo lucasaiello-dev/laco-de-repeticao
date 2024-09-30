@@ -56,7 +56,7 @@
 
             const valor_mensal_fgts = salario * 0.08
             const taxa_anual = 0.03
-            const taxa_mensal = ((1 + taxa_anual)**(1/12))-1
+            const taxa_mensal = ((1 + taxa_anual) ** (1 / 12)) - 1
 
             var valor_atual_fgts = 0
             var valor_juros_mes = 0
@@ -67,21 +67,31 @@
             var mes = 12
             var ano = 0
             var frase = ''
+            var mes_deposito_extra = gerarMesRandom()
+            var porcentagem_deposito_extra = gerarPorcentagemRandom()
+            var valor_deposito_extra = 0
 
             for (var contador_fgts = 1; contador_fgts <= tempo_meses; contador_fgts++) {
                 if (mes == 12) {
                     mes = 0
                     ano += 1
+                    mes_deposito_extra = gerarMesRandom()
+                    porcentagem_deposito_extra = gerarPorcentagemRandom()
                     frase += `<p class="ano">${ano}° Ano:</p>`
                 }
 
-                valor_depositos += valor_mensal_fgts
-                valor_atual_fgts += valor_mensal_fgts
-                valor_juros_mes = valor_atual_fgts*taxa_mensal
+                if (mes == mes_deposito_extra) {
+                    valor_deposito_extra = salario * porcentagem_deposito_extra
+                    frase += `<p style='color: green'>DEPÓSITO EXTRA! +${valor_deposito_extra.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>`
+                }
+
+                valor_depositos += valor_mensal_fgts + valor_deposito_extra
+                valor_atual_fgts += valor_mensal_fgts + valor_deposito_extra
+                valor_juros_mes = valor_atual_fgts * taxa_mensal
                 valor_total_juros += valor_juros_mes
                 valor_atual_fgts += valor_juros_mes
 
-                if (valor_atual_fgts >= limite_mil){
+                if (valor_atual_fgts >= limite_mil) {
                     limite_mil += 1000
                     img_coin += '<img class="img-coin" src="assets/bitcoin.png">'
                 }
@@ -96,6 +106,7 @@
                     <div class="img">
                         ${img_coin}
                     </div>
+                </div>
                 `
             }
 
@@ -103,11 +114,19 @@
             <p class="fim">
                 Você acumulou <span>${valor_atual_fgts.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                 <br>
-                Desse valor, <span>${valor_total_juros.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</span> são de <span>juros</span>
-                e <span>${(valor_depositos).toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})}</span> são de <span>depósitos</span>.
+                Desse valor, <span>${valor_total_juros.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span> são de <span>juros</span>
+                e <span>${(valor_depositos).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span> são de <span>depósitos</span>.
             </p>
                 `
             div_resultado.innerHTML = frase
+        }
+
+        function gerarPorcentagemRandom() {
+            return ((Math.random() * 6 + 10)) / 100
+        }
+
+        function gerarMesRandom() {
+            return parseInt(Math.random() * 12 + 1)
         }
 
 
